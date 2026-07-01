@@ -7,31 +7,36 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "holidays")
+@Table(name = "leave_types")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Holiday {
+public class LeaveType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "holiday_name", nullable = false, unique = true, length = 100)
-    private String holidayName;
-
-    @Column(name = "holiday_date", nullable = false, unique = true)
-    private LocalDate holidayDate;
+    @Column(nullable = false, unique = true, length = 100)
+    private String name;
 
     @Column(length = 500)
     private String description;
 
+    @Column(name = "total_days", nullable = false)
+    private Integer totalDays;
+
+    @Column(name = "carry_forward", nullable = false)
+    private Boolean carryForward;
+
+    @Column(name = "requires_approval", nullable = false)
+    private Boolean requiresApproval;
+
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }
