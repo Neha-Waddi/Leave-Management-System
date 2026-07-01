@@ -18,4 +18,6 @@ public interface LeaveRequestService {
     LeaveRequestResponse getLeaveById(Integer leaveId);
 
     List<LeaveRequestResponse> getEmployeeLeaves(Integer employeeId);
+
+    List<LeaveRequestResponse> getPendingApprovalsForManager(Integer managerId);
 }

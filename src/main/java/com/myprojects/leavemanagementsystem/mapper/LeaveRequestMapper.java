@@ -10,8 +10,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface LeaveRequestMapper {
 
-    // employee, leaveType, manager, status, totalDays and the timestamp fields
-    // are all resolved or computed in the service layer, so they're excluded here.
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "employee", ignore = true)
     @Mapping(target = "leaveType", ignore = true)

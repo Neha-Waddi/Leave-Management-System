@@ -11,8 +11,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EmployeeMapper {
 
-    // department, manager and password are resolved/handled in the service
-    // layer (they need repository lookups / encoding), so they're ignored here.
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "department", ignore = true)
     @Mapping(target = "manager", ignore = true)

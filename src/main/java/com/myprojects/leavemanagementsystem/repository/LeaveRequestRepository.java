@@ -17,10 +17,7 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Inte
 
     List<LeaveRequest> findByManagerIdAndStatus(Integer managerId, Status status);
 
-    /**
-     * Finds any existing leave request for the employee that overlaps the given
-     * date range and is not already rejected/cancelled. Used to block double-booking.
-     */
+
     @Query("""
             SELECT lr FROM LeaveRequest lr
             WHERE lr.employee.id = :employeeId

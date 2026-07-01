@@ -32,13 +32,10 @@ public class LeaveRequestDTO {
     @Size(max = 500, message = "Reason must not exceed 500 characters")
     private String reason;
 
-    // Cross-field check: end date must not be before start date.
-    // Bean Validation has no built-in way to compare two fields, so this
-    // is expressed as a computed boolean property that gets validated too.
     @AssertTrue(message = "End date cannot be before start date")
     public boolean isDateRangeValid() {
         if (startDate == null || endDate == null) {
-            return true; // let @NotNull report the missing field(s) instead
+            return true;
         }
         return !endDate.isBefore(startDate);
     }

@@ -176,6 +176,13 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 .toList();
     }
 
+    @Override
+    public List<LeaveRequestResponse> getPendingApprovalsForManager(Integer managerId) {
+        return leaveRequestRepository.findByManagerIdAndStatus(managerId, Status.PENDING).stream()
+                .map(leaveRequestMapper::toResponse)
+                .toList();
+    }
+
     private int calculateWorkingDays(LocalDate start, LocalDate end) {
         Set<LocalDate> holidayDates = new HashSet<>(
                 holidayRepository.findByHolidayDateBetween(start, end).stream()
