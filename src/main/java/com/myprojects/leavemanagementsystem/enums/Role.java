@@ -1,7 +1,7 @@
 package com.myprojects.leavemanagementsystem.enums;
 
 public enum Role {
-    EMPLOYEE,
+    ADMIN,
     MANAGER,
-    ADMIN
+    EMPLOYEE
 }

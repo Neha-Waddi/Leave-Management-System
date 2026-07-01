@@ -1,8 +1,7 @@
 package com.myprojects.leavemanagementsystem.mapper;
 
-import com.myprojects.leavemanagementsystem.dto.request.LeaveBalanceRequestDTO;
-import com.myprojects.leavemanagementsystem.dto.request.LeaveTypeRequestDTO;
 import com.myprojects.leavemanagementsystem.dto.response.LeaveBalanceResponse;
+import com.myprojects.leavemanagementsystem.entity.Employee;
 import com.myprojects.leavemanagementsystem.entity.LeaveBalance;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,11 +9,17 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface LeaveBalanceMapper {
 
-    @Mapping(source = "employee.id", target = "employeeId")
-    @Mapping(source = "employee.firstName", target = "employeeName")
-    @Mapping(source = "leaveType.id", target = "leaveTypeId")
-    @Mapping(source = "leaveType.name", target = "leaveTypeName")
-    LeaveBalanceResponse toResponse(LeaveBalance balance);
+    @Mapping(target = "employeeId", source = "employee.id")
+    @Mapping(target = "employeeName", expression = "java(fullName(entity.getEmployee()))")
+    @Mapping(target = "leaveTypeId", source = "leaveType.id")
+    @Mapping(target = "leaveTypeName", source = "leaveType.name")
+    LeaveBalanceResponse toResponse(LeaveBalance entity);
 
-    LeaveBalance toEntity(LeaveBalanceRequestDTO leaveBalanceRequestDTO);
+    default String fullName(Employee employee) {
+        if (employee == null) {
+            return null;
+        }
+        String last = employee.getLastName() == null ? "" : " " + employee.getLastName();
+        return employee.getFirstName() + last;
+    }
 }
