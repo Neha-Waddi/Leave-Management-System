@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class DepartmentController {
 
     private final DepartmentService departmentService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ApiResponse<DepartmentResponse>> createDepartment(
             @Valid @RequestBody DepartmentRequestDTO request) {
@@ -27,18 +29,21 @@ public class DepartmentController {
                 .body(ApiResponse.success("Department created successfully", response));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<DepartmentResponse>> getDepartmentById(@PathVariable Integer id) {
         DepartmentResponse response = departmentService.getDepartmentById(id);
         return ResponseEntity.ok(ApiResponse.success("Department fetched successfully", response));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     @GetMapping
     public ResponseEntity<ApiResponse<List<DepartmentResponse>>> getAllDepartments() {
         List<DepartmentResponse> response = departmentService.getAllDepartments();
         return ResponseEntity.ok(ApiResponse.success("Departments fetched successfully", response));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<DepartmentResponse>> updateDepartment(
             @PathVariable Integer id, @Valid @RequestBody DepartmentRequestDTO request) {
@@ -46,6 +51,7 @@ public class DepartmentController {
         return ResponseEntity.ok(ApiResponse.success("Department updated successfully", response));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteDepartment(@PathVariable Integer id) {
         departmentService.deleteDepartment(id);

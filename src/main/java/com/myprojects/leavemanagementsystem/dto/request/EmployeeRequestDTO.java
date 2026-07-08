@@ -1,7 +1,7 @@
 package com.myprojects.leavemanagementsystem.dto.request;
 
+import com.myprojects.leavemanagementsystem.enums.EmployeeStatus;
 import com.myprojects.leavemanagementsystem.enums.Role;
-import com.myprojects.leavemanagementsystem.enums.Status;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -53,7 +53,7 @@ public class EmployeeRequestDTO {
     @NotNull(message = "Role is required")
     private Role role;
 
-    private Status status;
+    private EmployeeStatus status;
 
     @NotNull(message = "Department is required")
     @Positive(message = "Department id must be a positive number")

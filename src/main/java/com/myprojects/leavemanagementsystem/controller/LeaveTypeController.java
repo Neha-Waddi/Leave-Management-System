@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class LeaveTypeController {
 
     private final LeaveTypeService leaveTypeService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ApiResponse<LeaveTypeResponse>> createLeaveType(
             @Valid @RequestBody LeaveTypeRequestDTO request) {
@@ -27,18 +29,21 @@ public class LeaveTypeController {
                 .body(ApiResponse.success("Leave type created successfully", response));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<LeaveTypeResponse>> getLeaveTypeById(@PathVariable Integer id) {
         LeaveTypeResponse response = leaveTypeService.getLeaveTypeById(id);
         return ResponseEntity.ok(ApiResponse.success("Leave type fetched successfully", response));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     @GetMapping
     public ResponseEntity<ApiResponse<List<LeaveTypeResponse>>> getAllLeaveTypes() {
         List<LeaveTypeResponse> response = leaveTypeService.getAllLeaveTypes();
         return ResponseEntity.ok(ApiResponse.success("Leave types fetched successfully", response));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<LeaveTypeResponse>> updateLeaveType(
             @PathVariable Integer id, @Valid @RequestBody LeaveTypeRequestDTO request) {
@@ -46,6 +51,7 @@ public class LeaveTypeController {
         return ResponseEntity.ok(ApiResponse.success("Leave type updated successfully", response));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteLeaveType(@PathVariable Integer id) {
         leaveTypeService.deleteLeaveType(id);

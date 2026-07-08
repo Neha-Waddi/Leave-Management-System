@@ -1,6 +1,6 @@
 package com.myprojects.leavemanagementsystem.dto.response;
 
-import com.myprojects.leavemanagementsystem.enums.Status;
+import com.myprojects.leavemanagementsystem.enums.LeaveStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +29,7 @@ public class LeaveRequestResponse {
     private Integer totalDays;
 
     private String reason;
-    private Status status;
+    private LeaveStatus status;
 
     private String managerComments;
 

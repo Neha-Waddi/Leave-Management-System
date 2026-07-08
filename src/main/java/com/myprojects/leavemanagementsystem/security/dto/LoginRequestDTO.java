@@ -1,4 +1,4 @@
-package com.myprojects.leavemanagementsystem.dto.request;
+package com.myprojects.leavemanagementsystem.security.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

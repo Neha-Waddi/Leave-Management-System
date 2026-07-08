@@ -1,5 +1,6 @@
 package com.myprojects.leavemanagementsystem.service.impl;
 
+import com.myprojects.leavemanagementsystem.aop.annotation.Audit;
 import com.myprojects.leavemanagementsystem.dto.request.DepartmentRequestDTO;
 import com.myprojects.leavemanagementsystem.dto.response.DepartmentResponse;
 import com.myprojects.leavemanagementsystem.entity.Department;
@@ -23,6 +24,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
+    @Audit(action = "CREATE_DEPARTMENT")
     public DepartmentResponse createDepartment(DepartmentRequestDTO request) {
         if (departmentRepository.existsByName(request.getName())) {
             throw new DuplicateResourceException("A department named '" + request.getName() + "' already exists");
@@ -48,6 +50,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
+    @Audit(action = "UPDATE_DEPARTMENT")
     public DepartmentResponse updateDepartment(Integer id, DepartmentRequestDTO request) {
         Department department = findDepartmentOrThrow(id);
 
@@ -63,6 +66,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
+    @Audit(action = "DELETE_DEPARTMENT")
     public void deleteDepartment(Integer id) {
         Department department = findDepartmentOrThrow(id);
         if (!department.getEmployees().isEmpty()) {

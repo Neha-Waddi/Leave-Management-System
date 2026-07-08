@@ -1,5 +1,6 @@
 package com.myprojects.leavemanagementsystem.service.impl;
 
+import com.myprojects.leavemanagementsystem.aop.annotation.Audit;
 import com.myprojects.leavemanagementsystem.dto.request.LeaveBalanceRequestDTO;
 import com.myprojects.leavemanagementsystem.dto.response.LeaveBalanceResponse;
 import com.myprojects.leavemanagementsystem.entity.Employee;
@@ -30,6 +31,7 @@ public class LeaveBalanceServiceImpl implements LeaveBalanceService {
 
     @Override
     @Transactional
+    @Audit(action = "CREATE_LEAVE_BALANCE")
     public LeaveBalanceResponse createLeaveBalance(LeaveBalanceRequestDTO request) {
         if (leaveBalanceRepository.existsByEmployeeIdAndLeaveTypeId(request.getEmployeeId(), request.getLeaveTypeId())) {
             throw new DuplicateResourceException(
@@ -67,6 +69,7 @@ public class LeaveBalanceServiceImpl implements LeaveBalanceService {
 
     @Override
     @Transactional
+    @Audit(action = "ADJUST_LEAVE_BALANCE")
     public void adjustBalance(Integer employeeId, Integer leaveTypeId, int deltaDays) {
         LeaveBalance balance = leaveBalanceRepository.findByEmployeeIdAndLeaveTypeId(employeeId, leaveTypeId)
                 .orElseThrow(() -> new ResourceNotFoundException(

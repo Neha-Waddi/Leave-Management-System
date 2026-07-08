@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class LeaveBalanceController {
 
     private final LeaveBalanceService leaveBalanceService;
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PostMapping
     public ResponseEntity<ApiResponse<LeaveBalanceResponse>> createLeaveBalance(
             @Valid @RequestBody LeaveBalanceRequestDTO request) {
@@ -27,6 +29,7 @@ public class LeaveBalanceController {
                 .body(ApiResponse.success("Leave balance created successfully", response));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<ApiResponse<List<LeaveBalanceResponse>>> getEmployeeBalances(
             @PathVariable Integer employeeId) {

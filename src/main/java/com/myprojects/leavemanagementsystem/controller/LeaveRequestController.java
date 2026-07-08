@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class LeaveRequestController {
 
     private final LeaveRequestService leaveRequestService;
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     @PostMapping("/apply/{employeeId}")
     public ResponseEntity<ApiResponse<LeaveRequestResponse>> applyLeave(
             @PathVariable Integer employeeId, @Valid @RequestBody LeaveRequestDTO request) {
@@ -30,6 +32,7 @@ public class LeaveRequestController {
                 .body(ApiResponse.success("Leave request submitted successfully", response));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PutMapping("/{leaveId}/approve")
     public ResponseEntity<ApiResponse<LeaveRequestResponse>> approveLeave(
             @PathVariable Integer leaveId, @RequestParam Integer approverId) {
@@ -37,6 +40,7 @@ public class LeaveRequestController {
         return ResponseEntity.ok(ApiResponse.success("Leave request approved successfully", response));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PutMapping("/{leaveId}/reject")
     public ResponseEntity<ApiResponse<LeaveRequestResponse>> rejectLeave(
             @PathVariable Integer leaveId, @RequestParam Integer approverId,
@@ -45,6 +49,7 @@ public class LeaveRequestController {
         return ResponseEntity.ok(ApiResponse.success("Leave request rejected successfully", response));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     @PutMapping("/{leaveId}/cancel")
     public ResponseEntity<ApiResponse<LeaveRequestResponse>> cancelLeave(
             @PathVariable Integer leaveId, @RequestParam Integer requesterId) {
@@ -52,12 +57,14 @@ public class LeaveRequestController {
         return ResponseEntity.ok(ApiResponse.success("Leave request cancelled successfully", response));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     @GetMapping("/{leaveId}")
     public ResponseEntity<ApiResponse<LeaveRequestResponse>> getLeaveById(@PathVariable Integer leaveId) {
         LeaveRequestResponse response = leaveRequestService.getLeaveById(leaveId);
         return ResponseEntity.ok(ApiResponse.success("Leave request fetched successfully", response));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<ApiResponse<List<LeaveRequestResponse>>> getEmployeeLeaves(
             @PathVariable Integer employeeId) {
@@ -65,6 +72,7 @@ public class LeaveRequestController {
         return ResponseEntity.ok(ApiResponse.success("Employee leave requests fetched successfully", response));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @GetMapping("/manager/{managerId}/pending")
     public ResponseEntity<ApiResponse<List<LeaveRequestResponse>>> getPendingApprovalsForManager(
             @PathVariable Integer managerId) {

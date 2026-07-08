@@ -1,5 +1,6 @@
 package com.myprojects.leavemanagementsystem.service.impl;
 
+import com.myprojects.leavemanagementsystem.aop.annotation.Audit;
 import com.myprojects.leavemanagementsystem.dto.request.LeaveTypeRequestDTO;
 import com.myprojects.leavemanagementsystem.dto.response.LeaveTypeResponse;
 import com.myprojects.leavemanagementsystem.entity.LeaveType;
@@ -25,6 +26,7 @@ public class LeaveTypeServiceImpl implements LeaveTypeService {
 
     @Override
     @Transactional
+    @Audit(action = "CREATE_LEAVE_TYPE")
     public LeaveTypeResponse createLeaveType(LeaveTypeRequestDTO request) {
         if (leaveTypeRepository.existsByName(request.getName())) {
             throw new DuplicateResourceException("A leave type named '" + request.getName() + "' already exists");
@@ -49,6 +51,7 @@ public class LeaveTypeServiceImpl implements LeaveTypeService {
 
     @Override
     @Transactional
+    @Audit(action = "UPDATE_LEAVE_TYPE")
     public LeaveTypeResponse updateLeaveType(Integer id, LeaveTypeRequestDTO request) {
         LeaveType leaveType = findLeaveTypeOrThrow(id);
 
@@ -64,6 +67,7 @@ public class LeaveTypeServiceImpl implements LeaveTypeService {
 
     @Override
     @Transactional
+    @Audit(action = "DELETE_LEAVE_TYPE")
     public void deleteLeaveType(Integer id) {
         LeaveType leaveType = findLeaveTypeOrThrow(id);
         if (leaveBalanceRepository.existsByLeaveTypeId(id)) {

@@ -1,11 +1,7 @@
 package com.myprojects.leavemanagementsystem.enums;
 
-public enum Status {
+public enum EmployeeStatus {
     ACTIVE,
     INACTIVE,
-
-    PENDING,
-    APPROVED,
-    REJECTED,
-    CANCELLED
+    RESIGNED
 }

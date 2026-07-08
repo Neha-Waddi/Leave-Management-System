@@ -1,5 +1,6 @@
 package com.myprojects.leavemanagementsystem.service.impl;
 
+import com.myprojects.leavemanagementsystem.aop.annotation.Audit;
 import com.myprojects.leavemanagementsystem.dto.request.HolidayRequestDTO;
 import com.myprojects.leavemanagementsystem.dto.response.HolidayResponse;
 import com.myprojects.leavemanagementsystem.entity.Holiday;
@@ -23,6 +24,7 @@ public class HolidayServiceImpl implements HolidayService {
 
     @Override
     @Transactional
+    @Audit(action = "CREATE_HOLIDAY")
     public HolidayResponse createHoliday(HolidayRequestDTO request) {
         if (holidayRepository.existsByHolidayDate(request.getHolidayDate())) {
             throw new DuplicateResourceException(
@@ -48,6 +50,7 @@ public class HolidayServiceImpl implements HolidayService {
 
     @Override
     @Transactional
+    @Audit(action = "UPDATE_HOLIDAY")
     public HolidayResponse updateHoliday(Integer id, HolidayRequestDTO request) {
         Holiday holiday = findHolidayOrThrow(id);
 
@@ -64,6 +67,7 @@ public class HolidayServiceImpl implements HolidayService {
 
     @Override
     @Transactional
+    @Audit(action = "DELETE_HOLIDAY")
     public void deleteHoliday(Integer id) {
         Holiday holiday = findHolidayOrThrow(id);
         holidayRepository.delete(holiday);

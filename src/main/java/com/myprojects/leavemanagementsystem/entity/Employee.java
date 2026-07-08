@@ -1,7 +1,7 @@
 package com.myprojects.leavemanagementsystem.entity;
 
+import com.myprojects.leavemanagementsystem.enums.EmployeeStatus;
 import com.myprojects.leavemanagementsystem.enums.Role;
-import com.myprojects.leavemanagementsystem.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -42,7 +41,7 @@ public class Employee {
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private EmployeeStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="department_id")

@@ -1,6 +1,6 @@
 package com.myprojects.leavemanagementsystem.entity;
 
-import com.myprojects.leavemanagementsystem.enums.Status;
+import com.myprojects.leavemanagementsystem.enums.LeaveStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -49,7 +49,7 @@ public class LeaveRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private LeaveStatus status;
 
     @Column(name = "manager_comments", length = 1000)
     private String managerComments;
@@ -63,4 +63,5 @@ public class LeaveRequest {
 
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
+
 }

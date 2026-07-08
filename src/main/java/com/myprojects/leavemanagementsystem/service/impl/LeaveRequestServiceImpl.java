@@ -1,11 +1,12 @@
 package com.myprojects.leavemanagementsystem.service.impl;
 
+import com.myprojects.leavemanagementsystem.aop.annotation.Audit;
 import com.myprojects.leavemanagementsystem.dto.request.LeaveRequestDTO;
 import com.myprojects.leavemanagementsystem.dto.response.LeaveRequestResponse;
 import com.myprojects.leavemanagementsystem.entity.Employee;
 import com.myprojects.leavemanagementsystem.entity.LeaveRequest;
 import com.myprojects.leavemanagementsystem.entity.LeaveType;
-import com.myprojects.leavemanagementsystem.enums.Status;
+import com.myprojects.leavemanagementsystem.enums.LeaveStatus;
 import com.myprojects.leavemanagementsystem.exception.InvalidLeaveRequestException;
 import com.myprojects.leavemanagementsystem.exception.ResourceNotFoundException;
 import com.myprojects.leavemanagementsystem.exception.UnauthorizedActionException;
@@ -44,6 +45,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
     @Override
     @Transactional
+    @Audit(action = "APPLY_LEAVE")
     public LeaveRequestResponse applyLeave(Integer employeeId, LeaveRequestDTO request) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> ResourceNotFoundException.of("Employee", employeeId));
@@ -76,10 +78,10 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
         boolean autoApprove = Boolean.FALSE.equals(leaveType.getRequiresApproval());
         if (autoApprove) {
-            leaveRequest.setStatus(Status.APPROVED);
+            leaveRequest.setStatus(LeaveStatus.APPROVED);
             leaveRequest.setApprovedAt(LocalDateTime.now());
         } else {
-            leaveRequest.setStatus(Status.PENDING);
+            leaveRequest.setStatus(LeaveStatus.PENDING);
         }
 
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
@@ -97,6 +99,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
     @Override
     @Transactional
+    @Audit(action = "APPROVE_LEAVE")
     public LeaveRequestResponse approveLeave(Integer leaveId, Integer approverId) {
         LeaveRequest leaveRequest = findLeaveOrThrow(leaveId);
         requirePending(leaveRequest);
@@ -105,7 +108,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         leaveBalanceService.adjustBalance(
                 leaveRequest.getEmployee().getId(), leaveRequest.getLeaveType().getId(), leaveRequest.getTotalDays());
 
-        leaveRequest.setStatus(Status.APPROVED);
+        leaveRequest.setStatus(LeaveStatus.APPROVED);
         leaveRequest.setApprovedAt(LocalDateTime.now());
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
 
@@ -117,12 +120,13 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
     @Override
     @Transactional
+    @Audit(action = "REJECT_LEAVE")
     public LeaveRequestResponse rejectLeave(Integer leaveId, Integer approverId, String comments) {
         LeaveRequest leaveRequest = findLeaveOrThrow(leaveId);
         requirePending(leaveRequest);
         requireAuthorizedApprover(leaveRequest, approverId);
 
-        leaveRequest.setStatus(Status.REJECTED);
+        leaveRequest.setStatus(LeaveStatus.REJECTED);
         leaveRequest.setManagerComments(comments);
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
 
@@ -134,27 +138,28 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
     @Override
     @Transactional
+    @Audit(action = "CANCEL_LEAVE")
     public LeaveRequestResponse cancelLeave(Integer leaveId, Integer requesterId) {
         LeaveRequest leaveRequest = findLeaveOrThrow(leaveId);
 
         if (!leaveRequest.getEmployee().getId().equals(requesterId)) {
             throw new UnauthorizedActionException("You can only cancel your own leave requests");
         }
-        if (leaveRequest.getStatus() != Status.PENDING && leaveRequest.getStatus() != Status.APPROVED) {
+        if (leaveRequest.getStatus() != LeaveStatus.PENDING && leaveRequest.getStatus() != LeaveStatus.APPROVED) {
             throw new InvalidLeaveRequestException(
                     "Only pending or approved leave requests can be cancelled (current status: "
                             + leaveRequest.getStatus() + ")");
         }
 
         // Balance was only deducted once the leave was approved, so only restore it then.
-        if (leaveRequest.getStatus() == Status.APPROVED) {
+        if (leaveRequest.getStatus() == LeaveStatus.APPROVED) {
             leaveBalanceService.adjustBalance(
                     leaveRequest.getEmployee().getId(), leaveRequest.getLeaveType().getId(),
                     -leaveRequest.getTotalDays());
         }
 
         String previousStatus = leaveRequest.getStatus().name();
-        leaveRequest.setStatus(Status.CANCELLED);
+        leaveRequest.setStatus(LeaveStatus.CANCELLED);
         leaveRequest.setCancelledAt(LocalDateTime.now());
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
 
@@ -178,7 +183,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
     @Override
     public List<LeaveRequestResponse> getPendingApprovalsForManager(Integer managerId) {
-        return leaveRequestRepository.findByManagerIdAndStatus(managerId, Status.PENDING).stream()
+        return leaveRequestRepository.findByManagerIdAndStatus(managerId, LeaveStatus.PENDING).stream()
                 .map(leaveRequestMapper::toResponse)
                 .toList();
     }
@@ -200,7 +205,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     }
 
     private void requirePending(LeaveRequest leaveRequest) {
-        if (leaveRequest.getStatus() != Status.PENDING) {
+        if (leaveRequest.getStatus() != LeaveStatus.PENDING) {
             throw new InvalidLeaveRequestException(
                     "Only pending leave requests can be actioned (current status: " + leaveRequest.getStatus() + ")");
         }

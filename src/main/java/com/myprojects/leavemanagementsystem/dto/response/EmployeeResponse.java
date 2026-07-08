@@ -1,7 +1,7 @@
 package com.myprojects.leavemanagementsystem.dto.response;
 
+import com.myprojects.leavemanagementsystem.enums.EmployeeStatus;
 import com.myprojects.leavemanagementsystem.enums.Role;
-import com.myprojects.leavemanagementsystem.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +24,7 @@ public class EmployeeResponse {
     private String designation;
     private LocalDate joiningDate;
     private Role role;
-    private Status status;
+    private EmployeeStatus status;
 
     private Integer departmentId;
     private String departmentName;

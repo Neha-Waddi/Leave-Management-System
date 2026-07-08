@@ -1,6 +1,7 @@
 package com.myprojects.leavemanagementsystem.repository;
 
 import com.myprojects.leavemanagementsystem.entity.Employee;
+import com.myprojects.leavemanagementsystem.enums.EmployeeStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -19,4 +20,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findByDepartmentId(Integer departmentId);
 
     List<Employee> findByManagerId(Integer managerId);
+    List<Employee> findByStatus(EmployeeStatus status);
 }

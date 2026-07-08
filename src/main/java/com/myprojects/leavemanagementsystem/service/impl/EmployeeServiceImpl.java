@@ -1,10 +1,11 @@
 package com.myprojects.leavemanagementsystem.service.impl;
 
+import com.myprojects.leavemanagementsystem.aop.annotation.Audit;
 import com.myprojects.leavemanagementsystem.dto.request.EmployeeRequestDTO;
 import com.myprojects.leavemanagementsystem.dto.response.EmployeeResponse;
 import com.myprojects.leavemanagementsystem.entity.Department;
 import com.myprojects.leavemanagementsystem.entity.Employee;
-import com.myprojects.leavemanagementsystem.enums.Status;
+import com.myprojects.leavemanagementsystem.enums.EmployeeStatus;
 import com.myprojects.leavemanagementsystem.exception.DuplicateResourceException;
 import com.myprojects.leavemanagementsystem.exception.ResourceNotFoundException;
 import com.myprojects.leavemanagementsystem.mapper.EmployeeMapper;
@@ -31,6 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
+    @Audit(action = "CREATE_EMPLOYEE")
     public EmployeeResponse createEmployee(EmployeeRequestDTO request) {
         if (employeeRepository.existsByEmail(request.getEmail())) {
             throw new DuplicateResourceException("An employee with email '" + request.getEmail() + "' already exists");
@@ -50,7 +52,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setDepartment(department);
         employee.setManager(manager);
         if (employee.getStatus() == null) {
-            employee.setStatus(Status.ACTIVE);
+            employee.setStatus(EmployeeStatus.ACTIVE);
         }
 
         Employee saved = employeeRepository.save(employee);
@@ -73,12 +75,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
+    @Audit(action = "UPDATE_EMPLOYEE")
     public EmployeeResponse updateEmployee(Integer id, EmployeeRequestDTO request) {
         Employee employee = findEmployeeOrThrow(id);
 
         boolean emailChanged = !employee.getEmail().equalsIgnoreCase(request.getEmail());
         if (emailChanged && employeeRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateResourceException("An employee with email '" + request.getEmail() + "' already exists");
+            throw new DuplicateResourceException("An employee with email '" +  request.getEmail() + "' already exists");
         }
 
         boolean codeChanged = !employee.getEmployeeCode().equalsIgnoreCase(request.getEmployeeCode());
@@ -107,6 +110,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
+    @Audit(action = "DELETE_EMPLOYEE")
     public void deleteEmployee(Integer id) {
         Employee employee = findEmployeeOrThrow(id);
         if (!employeeRepository.findByManagerId(id).isEmpty()) {
