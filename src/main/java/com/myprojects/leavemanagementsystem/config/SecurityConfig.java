@@ -40,8 +40,12 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/api/auth/**")
                         .permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
 
-                        .anyRequest().authenticated()
+                        .requestMatchers("/actuator/**")
+//                        .hasRole("ADMIN")
+//                        .anyRequest().authenticated()
+                                .permitAll()
                 )
 
                 .headers(headers ->
